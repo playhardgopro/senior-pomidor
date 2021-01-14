@@ -36,8 +36,6 @@ import { Vue, Component } from 'vue-property-decorator';
   components: { EssentialLink },
 })
 export default class MainLayout extends Vue {
-  leftDrawerOpen = false;
-
   minimize() {
     if (process.env.MODE === 'electron') {
       // eslint-disable-next-line no-unused-expressions

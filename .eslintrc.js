@@ -79,9 +79,10 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
     'prefer-promise-reject-errors': 'off',
+    'no-shadow': 'warn',
 
     // TypeScript
-    quotes: ['warn', 'single', { avoidEscape: true }],
+    'quotes': ['warn', 'single', { avoidEscape: true }],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
 
