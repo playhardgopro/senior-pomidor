@@ -1,10 +1,15 @@
 {
-  "extends": "@quasar/app/tsconfig-preset",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "experimentalDecorators": true,
-    "checkJs": false,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-  },
+	"extends": "@quasar/app/tsconfig-preset",
+	"compilerOptions": {
+		"baseUrl": ".",
+		"experimentalDecorators": true,
+		"checkJs": false,
+		"skipLibCheck": true,
+		"moduleResolution": "node",
+	},
+	"include": [
+		"**/*.ts",
+		"**/*.js",
+		"**/*.vue"
+	]
 }
