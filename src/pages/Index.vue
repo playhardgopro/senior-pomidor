@@ -1,48 +1,74 @@
 <template>
-	<q-page class="row items-center justify-evenly">
-		<example-component
-			title="Example component"
-			active
-			:todos="todos"
-			:meta="meta"
-		></example-component>
+	<q-page padding class="column items-center justify-evenly">
+		<Timer
+			:time="timeSetByUserBackup"
+			:time-to-stop="distance"
+			@timer:start="handleTimerStart"
+			@timer:pause="handleTimerPause"
+			@timer:stop="handleTimerStop"
+		></Timer>
+		<q-input @input="handleInput" />
 	</q-page>
 </template>
 
 <script lang="ts">
-import { Todo, Meta } from 'components/models';
-import ExampleComponent from 'components/ClassComponent.vue';
+import Timer from 'components/Timer/Timer.vue';
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component({
-	components: { ExampleComponent },
+	components: { Timer },
 })
 export default class PageIndex extends Vue {
-	todos: Todo[] = [
-		{
-			id: 1,
-			content: 'ct1',
-		},
-		{
-			id: 2,
-			content: 'ct2',
-		},
-		{
-			id: 3,
-			content: 'ct3',
-		},
-		{
-			id: 4,
-			content: 'ct4',
-		},
-		{
-			id: 5,
-			content: 'ct5',
-		},
-	];
+	time = 100;
 
-	meta: Meta = {
-		totalCount: 1200,
-	};
+	/**
+	 * in seconds
+	 * */
+	timeSetByUser = 0;
+
+	timeSetByUserBackup = 0;
+
+	timeout!: number;
+
+	interval!: number;
+
+	get distance() {
+		return Math.round(this.timeSetByUser);
+	}
+
+	handleInput(value: string) {
+		this.timeSetByUser = Number(value);
+
+		this.timeSetByUserBackup = Number(value);
+	}
+
+	handleTimerStart() {
+		if (this.timeSetByUser > 0 && this.timeSetByUserBackup > 0) {
+			this.run(0, 1000);
+		}
+	}
+
+	handleTimerPause() {
+		clearInterval(this.interval);
+		clearTimeout(this.timeout);
+	}
+
+	handleTimerStop() {
+		this.handleTimerPause();
+		this.handleInput('0');
+	}
+
+	run(toStart: number, step: number) {
+		this.tick();
+		if (toStart) {
+			this.timeout = window.setTimeout(() => this.run(0, step), toStart);
+		} else {
+			this.interval = window.setInterval(this.tick, step);
+		}
+	}
+
+	tick() {
+		this.timeSetByUser -= 1;
+	}
 }
 </script>

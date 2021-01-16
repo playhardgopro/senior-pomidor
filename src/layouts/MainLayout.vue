@@ -1,16 +1,7 @@
 <template>
 	<q-layout view="lHh Lpr lFf">
-		<q-header elevated>
+		<q-header>
 			<q-toolbar>
-				<q-btn
-					flat
-					dense
-					round
-					icon="menu"
-					aria-label="Menu"
-					@click="leftDrawerOpen = !leftDrawerOpen"
-				/>
-
 				<q-toolbar-title>
 					Senior Pomidor
 				</q-toolbar-title>
@@ -28,13 +19,9 @@
 </template>
 
 <script lang="ts">
-import EssentialLink from 'components/EssentialLink.vue';
-
 import { Vue, Component } from 'vue-property-decorator';
 
-@Component({
-	components: { EssentialLink },
-})
+@Component
 export default class MainLayout extends Vue {
 	minimize() {
 		if (process.env.MODE === 'electron') {

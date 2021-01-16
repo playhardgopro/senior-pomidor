@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import {
-	app, BrowserWindow, nativeTheme, Tray, Menu, nativeImage,
+	app, BrowserWindow, nativeTheme, Tray, Menu, nativeImage, MenuItem,
 } from 'electron';
 
 import fs from 'fs';
@@ -31,50 +26,70 @@ if (process.env.PROD) {
 
 let mainWindow;
 let tray;
+let menu;
 
-function createWindow() {
+async function createWindow() {
 	/**
    * Initial window options
    */
-	mainWindow = new BrowserWindow({
-		width: 1000,
-		height: 600,
-		useContentSize: true,
-		frame: false,
-		webPreferences: {
-			// Change from /quasar.conf.js > electron > nodeIntegration;
-			// More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
-			nodeIntegration: process.env.QUASAR_NODE_INTEGRATION,
-			nodeIntegrationInWorker: process.env.QUASAR_NODE_INTEGRATION,
+	if (!mainWindow) {
+		mainWindow = new BrowserWindow({
+			width: 1000,
+			height: 600,
+			useContentSize: true,
+			frame: false,
+			webPreferences: {
+				// Change from /quasar.conf.js > electron > nodeIntegration;
+				// More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
+				nodeIntegration: process.env.QUASAR_NODE_INTEGRATION,
+				nodeIntegrationInWorker: process.env.QUASAR_NODE_INTEGRATION,
 
-			// More info: /quasar-cli/developing-electron-apps/electron-preload-script
-			// preload: path.resolve(__dirname, 'electron-preload.js')
-		},
-	});
-
-	mainWindow.loadURL(process.env.APP_URL);
+				// More info: /quasar-cli/developing-electron-apps/electron-preload-script
+				// preload: path.resolve(__dirname, 'electron-preload.js')
+			},
+		});
+		mainWindow.hide();
+		await mainWindow.loadURL(process.env.APP_URL);
+	}
 
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
 }
+
+const menuItemQuit = new MenuItem({ label: 'Quit', role: 'quit', type: 'normal' });
+
+const menuItemActivate = new MenuItem({
+	label: 'Activate',
+	type: 'normal',
+	click: async () => {
+		if (!mainWindow) {
+			await createWindow();
+		}
+		mainWindow.show();
+	},
+});
+
 function createTray() {
-	const iconPath = path.join(__dirname, '../icons/icon.ico');
+	const iconPath = path.join(__statics, 'tray-icon.png');
 	const icon = nativeImage.createFromPath(iconPath);
 
 	tray = new Tray(icon);
-	const contextMenu = Menu.buildFromTemplate([
-		{ label: 'Maximize', type: 'normal', click: () => mainWindow?.maximize() },
-		{ label: 'Minimize', type: 'normal', click: () => mainWindow?.minimize() },
-		{ label: 'Exit', type: 'normal', click: () => app.quit() },
+	menu = new Menu();
 
-	]);
+	menu.insert(0, menuItemActivate);
+	menu.insert(1, menuItemQuit);
+
+	tray.setImage(icon);
+	// tray.setTitle('Senior pomidor');
 	tray.setToolTip('Senior pomidor');
-	tray.setContextMenu(contextMenu);
+	tray.setContextMenu(menu);
 }
 
-app.on('ready', createWindow);
-app.on('ready', createTray);
+app.whenReady().then(() => {
+	createWindow();
+	createTray();
+});
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {

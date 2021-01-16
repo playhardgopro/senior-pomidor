@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path');
-
 module.exports = {
 	// https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
 	// This option interrupts the configuration hierarchy at this file
@@ -16,10 +13,10 @@ module.exports = {
 		// Needed to make the parser take into account 'vue' files
 		extraFileExtensions: ['.vue'],
 		parser: '@typescript-eslint/parser',
-		project: [path.resolve(__dirname, './tsconfig.eslint.json')],
-		tsconfigRootDir: __dirname,
-		ecmaVersion: 'esnext', // Allows for the parsing of modern ECMAScript features
-		sourceType: 'module', // Allows for the use of imports
+		// project: [path.resolve(__dirname, './tsconfig.eslint.json')],
+		// tsconfigRootDir: __dirname,
+		// ecmaVersion: 'esnext', // Allows for the parsing of modern ECMAScript features
+		// sourceType: 'module', // Allows for the use of imports
 	},
 
 	env: {
@@ -90,6 +87,20 @@ module.exports = {
 		quotes: ['warn', 'single', { avoidEscape: true }],
 		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
+		'@typescript-eslint/await-thenable': 'off',
+		'@typescript-eslint/no-floating-promises': 'off',
+		'@typescript-eslint/no-implied-eval': 'off',
+		'@typescript-eslint/no-misused-promises': 'off',
+		'@typescript-eslint/no-unnecessary-type-assertion': 'off',
+		'@typescript-eslint/no-unsafe-assignment': 'off',
+		'@typescript-eslint/no-unsafe-call': 'off',
+		'@typescript-eslint/no-unsafe-member-access': 'off',
+		'@typescript-eslint/no-unsafe-return': 'off',
+		'@typescript-eslint/prefer-regexp-exec': 'off',
+		'@typescript-eslint/require-await': 'off',
+		'@typescript-eslint/restrict-plus-operands': 'off',
+		'@typescript-eslint/restrict-template-expressions': 'off',
+		'@typescript-eslint/unbound-method': 'off',
 
 		// allow debugger during development only
 		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
