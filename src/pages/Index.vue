@@ -6,6 +6,7 @@
 			@timer:start="handleTimerStart"
 			@timer:pause="handleTimerPause"
 			@timer:stop="handleTimerStop"
+			@timer:expire="notify"
 		></Timer>
 		<q-input @input="handleInput" />
 	</q-page>
@@ -36,6 +37,14 @@ export default class PageIndex extends Vue {
 		return Math.round(this.timeSetByUser);
 	}
 
+	get notification() {
+		const options = {
+			title: 'Senior Pomidor',
+			body: 'Время вышло',
+		};
+		return new this.$q.electron.remote.Notification(options);
+	}
+
 	handleInput(value: string) {
 		this.timeSetByUser = Number(value);
 
@@ -54,8 +63,16 @@ export default class PageIndex extends Vue {
 	}
 
 	handleTimerStop() {
-		this.handleTimerPause();
-		this.handleInput('0');
+		clearInterval(this.interval);
+		clearTimeout(this.timeout);
+		this.handleInput('');
+	}
+
+	notify() {
+		this.notification.show();
+		clearInterval(this.interval);
+		clearTimeout(this.timeout);
+		this.handleInput('');
 	}
 
 	run(toStart: number, step: number) {
