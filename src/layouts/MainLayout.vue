@@ -3,7 +3,7 @@
 		<q-header>
 			<q-toolbar>
 				<q-toolbar-title>
-					Senior Pomidor
+					{{ title }}
 				</q-toolbar-title>
 
 				<q-btn dense flat icon="minimize" @click="minimize"></q-btn>
@@ -13,6 +13,20 @@
 		</q-header>
 
 		<q-page-container>
+			<q-tabs
+				v-model="tab"
+				dense
+				align="right"
+				class="bg-primary text-white shadow-2"
+				:breakpoint="0"
+			>
+				<q-tab name="main" icon="home" @click="$router.push('/')" />
+				<q-tab
+					name="settings"
+					icon="settings"
+					@click="$router.push('/settings')"
+				/>
+			</q-tabs>
 			<router-view />
 		</q-page-container>
 	</q-layout>
@@ -21,11 +35,16 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
+type Tab = 'main' | 'settings';
+
 @Component
 export default class MainLayout extends Vue {
+	tab: Tab = 'main';
+
+	title = 'Senior Pomidor';
+
 	minimize() {
 		if (process.env.MODE === 'electron') {
-			// eslint-disable-next-line no-unused-expressions
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.minimize();
 		}
 	}
@@ -46,7 +65,6 @@ export default class MainLayout extends Vue {
 
 	close() {
 		if (process.env.MODE === 'electron') {
-			// eslint-disable-next-line no-unused-expressions
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.close();
 		}
 	}
