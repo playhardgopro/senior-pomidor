@@ -1,14 +1,20 @@
 <template>
 	<q-layout view="lHh Lpr lFf">
-		<q-header>
+		<q-header @dblclick="minimize">
 			<q-toolbar>
 				<q-toolbar-title>
 					{{ title }}
 				</q-toolbar-title>
-
-				<q-btn dense flat icon="minimize" @click="minimize"></q-btn>
-				<q-btn dense flat icon="crop_square" @click="maximize"></q-btn>
-				<q-btn dense flat icon="close" @click="close"></q-btn>
+				<template v-if="isElectron">
+					<q-btn dense flat icon="minimize" @click="minimize"></q-btn>
+					<q-btn
+						dense
+						flat
+						icon="crop_square"
+						@click="maximize"
+					></q-btn>
+					<q-btn dense flat icon="close" @click="close"></q-btn>
+				</template>
 			</q-toolbar>
 		</q-header>
 
@@ -34,23 +40,27 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-
-type Tab = 'main' | 'settings';
+import { Tab } from '../typings/index';
 
 @Component
 export default class MainLayout extends Vue {
-	tab: Tab = 'main';
+	tab: Tab = this.$route.name as Tab;
 
 	title = 'Senior Pomidor';
 
+	// eslint-disable-next-line class-methods-use-this
+	get isElectron() {
+		return process.env.MODE === 'electron';
+	}
+
 	minimize() {
-		if (process.env.MODE === 'electron') {
+		if (this.isElectron) {
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.minimize();
 		}
 	}
 
 	maximize() {
-		if (process.env.MODE === 'electron') {
+		if (this.isElectron) {
 			const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
 
 			if (win) {
@@ -64,7 +74,7 @@ export default class MainLayout extends Vue {
 	}
 
 	close() {
-		if (process.env.MODE === 'electron') {
+		if (this.isElectron) {
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.close();
 		}
 	}
