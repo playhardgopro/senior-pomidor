@@ -9,7 +9,6 @@ const routes: RouterConfigTabs[] = [
 	{
 		path: '/',
 		component: () => import('layouts/MainLayout.vue'),
-		name: 'main',
 		children: [
 			{ path: '', name: 'main', component: () => import('pages/Index.vue') },
 			{ path: 'settings', name: 'settings', component: () => import('pages/Settings.vue') },
