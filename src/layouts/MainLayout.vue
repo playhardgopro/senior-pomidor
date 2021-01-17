@@ -1,6 +1,6 @@
 <template>
 	<q-layout view="lHh Lpr lFf">
-		<q-header @dblclick="minimize">
+		<q-header @dblclick="minimize" style="-webkit-app-region: drag">
 			<q-toolbar>
 				<q-toolbar-title>
 					{{ title }}
