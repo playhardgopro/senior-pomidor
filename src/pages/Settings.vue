@@ -52,36 +52,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
+import { Vue, Component } from 'vue-property-decorator';
 import { useStore } from 'vuex-simple';
 import { MyStore } from '../store/store';
 
 @Component
 export default class PageIndex extends Vue {
-	typedStore = useStore<MyStore>(this.$store);
+	get typedStore() {
+		return useStore<MyStore>(this.$store);
+	}
+
+	settings = this.typedStore.settings;
 
 	get concentrateTime() {
-		return this.typedStore.settings.concentrateTime;
+		return this.settings.concentrateTimeMinutes;
 	}
 
 	set concentrateTime(value) {
-		this.typedStore.settings.setConcentrateTime(value);
+		this.settings.setConcentrateTime(value);
 	}
 
 	get shortBreakTime() {
-		return this.typedStore.settings.shortBreakTime;
+		return this.settings.shortBreakTimeMinutes;
 	}
 
 	set shortBreakTime(value) {
-		this.typedStore.settings.setShortBreakTime(value);
+		this.settings.setShortBreakTime(value);
 	}
 
 	get longBreakTime() {
-		return this.typedStore.settings.longBreakTime;
+		return this.settings.longBreakTimeMinutes;
 	}
 
 	set longBreakTime(value) {
-		this.typedStore.settings.setLongBreakTime(value);
+		this.settings.setLongBreakTime(value);
 	}
 }
 </script>
