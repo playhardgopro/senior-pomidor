@@ -91,6 +91,12 @@ function createTray() {
 }
 
 app.whenReady().then(() => {
+	const gotTheLock = app.requestSingleInstanceLock();
+
+	if (!gotTheLock) {
+		app.exit(0);
+	}
+
 	if (!isDev) {
 		globalShortcut.register('CommandOrControl+R', () => {
 			console.log('CommandOrControl+R is pressed: Shortcut Disabled');
