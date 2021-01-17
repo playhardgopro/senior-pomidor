@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import {
-	app, BrowserWindow, nativeTheme, Tray, Menu, nativeImage, MenuItem,
+	app, BrowserWindow, nativeTheme, Tray, Menu, nativeImage, MenuItem, ipcMain, globalShortcut,
 } from 'electron';
 
 import fs from 'fs';
@@ -23,6 +23,8 @@ try {
 if (process.env.PROD) {
 	global.__statics = __dirname;
 }
+
+const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow;
 let tray;
@@ -80,13 +82,20 @@ function createTray() {
 	menu.insert(0, menuItemActivate);
 	menu.insert(1, menuItemQuit);
 
-	tray.setImage(icon);
-	// tray.setTitle('Senior pomidor');
 	tray.setToolTip('Senior pomidor');
 	tray.setContextMenu(menu);
+	ipcMain.on('tray-timer-update-event', (event, time) => {
+		tray.setImage(icon);
+		tray.setTitle(time);
+	});
 }
 
 app.whenReady().then(() => {
+	if (!isDev) {
+		globalShortcut.register('CommandOrControl+R', () => {
+			console.log('CommandOrControl+R is pressed: Shortcut Disabled');
+		});
+	}
 	createWindow();
 	createTray();
 });

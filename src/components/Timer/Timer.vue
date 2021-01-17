@@ -65,7 +65,16 @@ export default class Timer extends Vue {
 	}
 
 	get timeToStopFormatted() {
-		return dayjs.duration(this.timeToStop * 1000).format('HH:mm:ss');
+		let formatted = '';
+		const timeToStopDuration = dayjs.duration(this.timeToStop * 1000);
+
+		if (timeToStopDuration.hours() === 0) {
+			formatted = timeToStopDuration.format('mm:ss');
+		} else {
+			formatted = timeToStopDuration.format('HH:mm:ss');
+		}
+		this.$q.electron.ipcRenderer.send('tray-timer-update-event', formatted);
+		return formatted;
 	}
 
 	startTimer() {
