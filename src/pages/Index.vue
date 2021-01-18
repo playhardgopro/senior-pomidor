@@ -8,26 +8,36 @@
 			@timer:stop="handleTimerStop"
 			@timer:expire="notify"
 		></Timer>
-		<q-input @input="handleInput" />
 	</q-page>
 </template>
 
 <script lang="ts">
 import Timer from 'components/Timer/Timer.vue';
+import { MyStore } from 'src/store/store';
 import { Vue, Component } from 'vue-property-decorator';
+import { useStore } from 'vuex-simple';
 
 @Component({
 	components: { Timer },
 })
 export default class PageIndex extends Vue {
+	get typedStore() {
+		return useStore<MyStore>(this.$store);
+	}
+
+	settings = this.typedStore.settings;
+
 	time = 100;
 
 	/**
 	 * in seconds
 	 * */
-	timeSetByUser = 0;
+	timeSetByUser = this.settings.concentrateTime;
 
-	timeSetByUserBackup = 0;
+	/**
+	 * in seconds
+	 * */
+	// timeSetByUserBackup = this.settings.concentrateTime;
 
 	timeout!: number;
 
@@ -37,18 +47,19 @@ export default class PageIndex extends Vue {
 		return Math.round(this.timeSetByUser);
 	}
 
+	/**
+	 * in seconds
+	 * */
+	get timeSetByUserBackup() {
+		return this.settings.concentrateTime;
+	}
+
 	get notification() {
 		const options = {
 			title: 'Senior Pomidor',
 			body: 'Время вышло',
 		};
 		return new this.$q.electron.remote.Notification(options);
-	}
-
-	handleInput(value: string) {
-		this.timeSetByUser = Number(value);
-
-		this.timeSetByUserBackup = Number(value);
 	}
 
 	handleTimerStart() {
@@ -65,14 +76,16 @@ export default class PageIndex extends Vue {
 	handleTimerStop() {
 		clearInterval(this.interval);
 		clearTimeout(this.timeout);
-		this.handleInput('');
+		this.timeSetByUser = this.settings.concentrateTime;
+		// this.timeSetByUserBackup = this.settings.concentrateTime;
 	}
 
 	notify() {
 		this.notification.show();
 		clearInterval(this.interval);
 		clearTimeout(this.timeout);
-		this.handleInput('');
+		this.timeSetByUser = this.settings.concentrateTime;
+		// this.timeSetByUserBackup = this.settings.concentrateTime;
 	}
 
 	run(toStart: number, step: number) {

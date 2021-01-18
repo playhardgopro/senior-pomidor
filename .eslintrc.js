@@ -78,6 +78,7 @@ module.exports = {
 		'import/no-extraneous-dependencies': 'off',
 		'import/prefer-default-export': 'off',
 		'prefer-promise-reject-errors': 'off',
+		'object-curly-newline': 'off',
 		'no-shadow': 'warn',
 		'no-tabs': 'off',
 		'max-len': ['warn', 120],

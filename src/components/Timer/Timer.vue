@@ -11,7 +11,7 @@
 				class="q-ma-md"
 			/>
 		</div>
-		<h1 class="text-center">{{ timeToStop }}</h1>
+		<h1 class="text-center">{{ timeToStopFormatted }}</h1>
 		<q-btn-group outline>
 			<q-btn
 				color="positive"
@@ -37,6 +37,11 @@
 
 <script lang="ts">
 import { Vue, Component, Watch, Prop } from 'vue-property-decorator';
+import dayjs from 'dayjs';
+
+import duration from 'dayjs/plugin/duration';
+
+dayjs.extend(duration);
 
 @Component
 export default class Timer extends Vue {
@@ -57,6 +62,19 @@ export default class Timer extends Vue {
 
 	get progress() {
 		return (this.timeToStop / this.time) * 100;
+	}
+
+	get timeToStopFormatted() {
+		let formatted = '';
+		const timeToStopDuration = dayjs.duration(this.timeToStop * 1000);
+
+		if (timeToStopDuration.hours() === 0) {
+			formatted = timeToStopDuration.format('mm:ss');
+		} else {
+			formatted = timeToStopDuration.format('HH:mm:ss');
+		}
+		this.$q.electron.ipcRenderer.send('tray-timer-update-event', formatted);
+		return formatted;
 	}
 
 	startTimer() {

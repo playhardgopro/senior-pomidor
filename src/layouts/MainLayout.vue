@@ -1,18 +1,41 @@
 <template>
 	<q-layout view="lHh Lpr lFf">
-		<q-header>
+		<q-header
+			@dblclick="handleDoubleClick"
+			style="-webkit-app-region: drag"
+		>
 			<q-toolbar>
 				<q-toolbar-title>
-					Senior Pomidor
+					{{ title }}
 				</q-toolbar-title>
-
-				<q-btn dense flat icon="minimize" @click="minimize"></q-btn>
-				<q-btn dense flat icon="crop_square" @click="maximize"></q-btn>
-				<q-btn dense flat icon="close" @click="close"></q-btn>
+				<template v-if="isElectron">
+					<q-btn dense flat icon="minimize" @click="minimize"></q-btn>
+					<q-btn
+						dense
+						flat
+						icon="crop_square"
+						@click="maximize"
+					></q-btn>
+					<q-btn dense flat icon="close" @click="close"></q-btn>
+				</template>
 			</q-toolbar>
 		</q-header>
 
 		<q-page-container>
+			<q-tabs
+				v-model="tab"
+				dense
+				align="right"
+				class="bg-primary text-white shadow-2"
+				:breakpoint="0"
+			>
+				<q-tab name="main" icon="home" @click="$router.push('/')" />
+				<q-tab
+					name="settings"
+					icon="settings"
+					@click="$router.push('/settings')"
+				/>
+			</q-tabs>
 			<router-view />
 		</q-page-container>
 	</q-layout>
@@ -20,18 +43,46 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { Tab } from '../typings/index';
 
 @Component
 export default class MainLayout extends Vue {
+	tab: Tab = this.$route.name as Tab;
+
+	title = 'Senior Pomidor';
+
+	// eslint-disable-next-line class-methods-use-this
+	get isElectron() {
+		return process.env.MODE === 'electron';
+	}
+
+	handleDoubleClick() {
+		if (this.isElectron) {
+			const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
+
+			if (win?.isMaximized) {
+				this.restore();
+			}
+			if (win?.isNormal) {
+				this.maximize();
+			}
+		}
+	}
+
 	minimize() {
-		if (process.env.MODE === 'electron') {
-			// eslint-disable-next-line no-unused-expressions
+		if (this.isElectron) {
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.minimize();
 		}
 	}
 
+	restore() {
+		if (this.isElectron) {
+			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.restore();
+		}
+	}
+
 	maximize() {
-		if (process.env.MODE === 'electron') {
+		if (this.isElectron) {
 			const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
 
 			if (win) {
@@ -45,8 +96,7 @@ export default class MainLayout extends Vue {
 	}
 
 	close() {
-		if (process.env.MODE === 'electron') {
-			// eslint-disable-next-line no-unused-expressions
+		if (this.isElectron) {
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.close();
 		}
 	}

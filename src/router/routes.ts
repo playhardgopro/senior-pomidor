@@ -1,11 +1,18 @@
 import { RouteConfig } from 'vue-router';
+import type { Tab } from '../typings/index';
 
-const routes: RouteConfig[] = [
+interface RouterConfigTabs extends RouteConfig {
+	name?: Tab
+}
+
+const routes: RouterConfigTabs[] = [
 	{
 		path: '/',
 		component: () => import('layouts/MainLayout.vue'),
 		children: [
-			{ path: '', component: () => import('pages/Index.vue') },
+			{ path: '', name: 'main', component: () => import('pages/Index.vue') },
+			{ path: 'settings', name: 'settings', component: () => import('pages/Settings.vue') },
+
 		],
 	},
 
