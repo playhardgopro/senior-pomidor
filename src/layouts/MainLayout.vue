@@ -1,6 +1,9 @@
 <template>
 	<q-layout view="lHh Lpr lFf">
-		<q-header @dblclick="minimize" style="-webkit-app-region: drag">
+		<q-header
+			@dblclick="handleDoubleClick"
+			style="-webkit-app-region: drag"
+		>
 			<q-toolbar>
 				<q-toolbar-title>
 					{{ title }}
@@ -53,9 +56,28 @@ export default class MainLayout extends Vue {
 		return process.env.MODE === 'electron';
 	}
 
+	handleDoubleClick() {
+		if (this.isElectron) {
+			const win = this.$q.electron.remote.BrowserWindow.getFocusedWindow();
+
+			if (win?.isMaximized) {
+				this.restore();
+			}
+			if (win?.isNormal) {
+				this.maximize();
+			}
+		}
+	}
+
 	minimize() {
 		if (this.isElectron) {
 			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.minimize();
+		}
+	}
+
+	restore() {
+		if (this.isElectron) {
+			this.$q.electron.remote.BrowserWindow.getFocusedWindow()?.restore();
 		}
 	}
 
